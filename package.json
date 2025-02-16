@@ -2,8 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "mkdir -p dist && vite build",
-        "dev": "vite"
+        "build": "mkdir -p dist && npx vite build",
+        "dev": "npx vite"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.20",
