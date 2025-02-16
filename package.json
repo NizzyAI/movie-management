@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "if exist dist rmdir /s /q dist && mkdir dist && npx vite build",
+        "build": "rm -rf dist && mkdir dist && npx vite build",
         "dev": "npx vite"
     },
     "devDependencies": {
