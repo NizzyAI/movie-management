@@ -4,24 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Movie;
 use App\Models\User;
+use App\Models\Review; // Import the Review model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 use Illuminate\Http\JsonResponse;
 
 class MovieController extends Controller
 {
-    
     public function index(): JsonResponse
     {
         $movies = Movie::all();
         return response()->json($movies);
     }
 
-    
     public function show($id): JsonResponse
     {
-        $movie = Movie::find($id);
+        
+        $movie = Movie::with('reviews')->find($id);
 
         if (!$movie) {
             return response()->json(['message' => 'Movie not found'], 404);
@@ -32,10 +31,8 @@ class MovieController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        
         $this->authorize('isAdmin', User::class);
 
-       
         $request->validate([
             'title' => 'required|string',
             'category_id' => 'required|exists:categories,id',
@@ -45,13 +42,11 @@ class MovieController extends Controller
             'poster' => 'nullable|image|max:2048',
         ]);
 
-      
         $imagePath = null;
         if ($request->hasFile('poster')) {
             $imagePath = $request->file('poster')->store('posters', 'public');
         }
 
-       
         $movie = Movie::create([
             'title' => $request->title,
             'category_id' => $request->category_id,
@@ -64,20 +59,16 @@ class MovieController extends Controller
         return response()->json($movie, 201);
     }
 
-   
     public function update(Request $request, $id): JsonResponse
     {
-       
         $this->authorize('isAdmin', User::class);
 
-      
         $movie = Movie::find($id);
 
         if (!$movie) {
             return response()->json(['message' => 'Movie not found'], 404);
         }
 
-        
         $request->validate([
             'title' => 'sometimes|string',
             'category_id' => 'sometimes|exists:categories,id',
@@ -87,14 +78,11 @@ class MovieController extends Controller
             'poster' => 'nullable|image|max:2048',
         ]);
 
-        
         if ($request->hasFile('poster')) {
-           
             if ($movie->poster && Storage::disk('public')->exists($movie->poster)) {
                 Storage::disk('public')->delete($movie->poster);
             }
 
-          
             $imagePath = $request->file('poster')->store('posters', 'public');
             $movie->poster = $imagePath;
         }
@@ -110,25 +98,20 @@ class MovieController extends Controller
         return response()->json($movie);
     }
 
-  
     public function destroy($id): JsonResponse
     {
-     
         $this->authorize('isAdmin', User::class);
 
-      
         $movie = Movie::find($id);
 
         if (!$movie) {
             return response()->json(['message' => 'Movie not found'], 404);
         }
 
-        
         if ($movie->poster && Storage::disk('public')->exists($movie->poster)) {
             Storage::disk('public')->delete($movie->poster);
         }
 
-      
         $movie->delete();
 
         return response()->json(['message' => 'Movie deleted']);
