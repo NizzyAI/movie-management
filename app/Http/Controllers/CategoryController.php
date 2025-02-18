@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Movie;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-   
     public function index()
     {
         $categories = Category::all();
         return response()->json($categories);
     }
 
-   
     public function show($id)
     {
         $category = Category::find($id);
@@ -26,14 +25,12 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
-    
     public function store(Request $request)
     {
         $category = Category::create($request->all());
         return response()->json($category, 201);
     }
 
- 
     public function update(Request $request, $id)
     {
         $category = Category::find($id);
@@ -46,7 +43,6 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
-    
     public function destroy($id)
     {
         $category = Category::find($id);
@@ -57,5 +53,17 @@ class CategoryController extends Controller
 
         $category->delete();
         return response()->json(['message' => 'Category deleted']);
+    }
+
+
+    public function getMoviesByCategory($categoryId)
+    {
+        $movies = Movie::where('category_id', $categoryId)->get();
+
+        if ($movies->isEmpty()) {
+            return response()->json(['message' => 'No movies found for this category'], 404);
+        }
+
+        return response()->json($movies);
     }
 }

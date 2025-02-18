@@ -19,7 +19,7 @@ class MovieController extends Controller
 
     public function show($id): JsonResponse
     {
-        
+
         $movie = Movie::with('reviews')->find($id);
 
         if (!$movie) {
@@ -27,6 +27,12 @@ class MovieController extends Controller
         }
 
         return response()->json($movie);
+    }
+
+    public function getReviews($movieId)
+    {
+    $movie = Movie::findOrFail($movieId);
+    return response()->json($movie->reviews);
     }
 
     public function store(Request $request): JsonResponse
