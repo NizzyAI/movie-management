@@ -15,7 +15,7 @@ Route::get('/movies/{id}', [MovieController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 Route::get('/categories/{categoryId}/movies', [CategoryController::class, 'getMoviesByCategory']);
-
+Route::get('/movies/{movieId}/reviews', [MovieController::class, 'getReviews']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    Route::get('/movies/{movieId}/reviews', [MovieController::class, 'getReviews']);
+
     Route::post('/reviews', [ReviewController::class, 'store']);
     Route::get('/reviews', [ReviewController::class, 'index']);
 
