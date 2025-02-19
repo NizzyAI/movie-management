@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Movie extends Model {
     use HasFactory;
@@ -16,5 +17,9 @@ class Movie extends Model {
 
     public function reviews() {
         return $this->hasMany(Review::class);
+    }
+
+    public function getPosterUrlAttribute() {
+        return $this->poster ? asset('storage/' . $this->poster) : null;
     }
 }
